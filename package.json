@@ -1,0 +1,10 @@
+{
+  "name": "simple-usdt",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {"node": ">=22"},
+  "dependencies": {
+    "ethers": "6.17.0",
+    "firebase-admin": "14.3.0"
+  }
+}
