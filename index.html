@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="am">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="theme-color" content="#087f52">
+  <title>Birr Gram 🇪🇹</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="//libtl.com/sdk.js" data-zone="11728656" data-sdk="show_11728656"></script>
+  <style>
+    :root{--green:#0b7a53;--green2:#13a66f;--bg:#f3f7f5;--card:#fff;--text:#10231b;--muted:#718078;--danger:#c62828;--line:#e7eee9}
+    *{box-sizing:border-box}body{margin:0;background:#f5f8f6;font-family:Arial,"Noto Sans Ethiopic",sans-serif;color:#08251b}
+    .app{max-width:520px;margin:auto;min-height:100vh;padding-bottom:86px}.top{padding:22px 18px 14px;background:linear-gradient(135deg,#075d40,#12a46c);color:#fff;border-radius:0 0 26px 26px}
+    .brand{display:flex;justify-content:space-between;align-items:center}.brand h1{font-size:23px;margin:0}.brand small{opacity:.85}
+    .balance{margin-top:18px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:18px}.balance .num{font-size:34px;font-weight:800}.balance .birr{margin-top:5px;font-size:14px;opacity:.9}
+    main{padding:16px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:17px;box-shadow:0 5px 18px rgba(20,50,35,.05)}
+    .stat b{font-size:22px;display:block}.stat span{font-size:12px;color:var(--muted)}.section{margin-top:15px}.section h2{font-size:17px;margin:0 0 10px}
+    button{border:0;border-radius:14px;padding:13px 16px;font-size:15px;font-weight:700;cursor:pointer}.primary{background:var(--green);color:white}.secondary{background:#e7f5ef;color:var(--green)}.full{width:100%}
+    .nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(520px,100%);display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-top:1px solid var(--line);padding:9px 8px calc(9px + env(safe-area-inset-bottom));z-index:5}
+    .nav button{background:transparent;color:var(--muted);padding:9px 4px;font-size:12px}.nav button.active{color:var(--green)}.nav span{display:block;font-size:20px;margin-bottom:3px}
+    .page{display:none}.page.active{display:block}.notice{padding:13px;border-radius:14px;background:#fff7df;color:#765900;font-size:13px;margin-bottom:12px}
+    .input{width:100%;padding:14px;border:1px solid #d9e5df;border-radius:13px;margin:6px 0 12px;font-size:15px;background:#fff}.label{font-size:13px;font-weight:700}
+    .history{display:flex;justify-content:space-between;gap:8px;padding:13px 0;border-bottom:1px solid var(--line);font-size:13px}.pill{padding:5px 8px;border-radius:999px;background:#fff0df;color:#875300;font-size:11px;font-weight:700}.success{background:#e5f7ed;color:#087047}
+    .refbox{word-break:break-all;background:#f0f6f3;padding:12px;border-radius:12px;font-size:12px}.hidden{display:none!important}
+    .loader{position:fixed;inset:0;background:rgba(255,255,255,.82);display:flex;align-items:center;justify-content:center;z-index:20;font-weight:700}.toast{position:fixed;left:16px;right:16px;bottom:90px;background:#17251f;color:#fff;padding:13px;border-radius:12px;text-align:center;z-index:30}
+  </style>
+</head>
+<body>
+<div id="loader" class="loader">Birr Gram እየተጫነ ነው…</div>
+<div class="app">
+  <header class="top">
+    <div class="brand"><div><h1>Birr Gram 🇪🇹</h1><small id="hello">እንኳን ደህና መጡ</small></div><div>💚</div></div>
+    <div class="balance"><div class="num" id="points">0</div><div>ነጥብ</div></div>
+  </header>
+
+  <main>
+    <section id="home" class="page active">
+      <div class="section"><h2>ዛሬ ማስታወቂያ</h2><div class="card stat"><b id="adsToday">0 / 50</b><span>የተመለከቱ ማስታወቂያዎች</span><div style="height:9px;background:#eaf0ed;border-radius:99px;margin-top:12px"><div id="bar" style="height:100%;width:0%;background:var(--green2);border-radius:99px"></div></div></div></div>
+      <div class="grid section">
+        <div class="card stat"><b id="refs">0</b><span>የጋበዙት</span></div>
+        <div class="card stat"><b>300</b><span>ነጥብ / ግብዣ</span></div>
+      </div>
+      <div class="section"><div class="card"><h2>📺 ማስታወቂያ ይመልከቱ</h2><p style="color:var(--muted);font-size:13px">አንድ ማስታወቂያ በተሳካ ሁኔታ ካጠናቀቁ 200 ነጥብ ያገኛሉ።</p><button class="primary full" onclick="watchAd()">📺 ማስታወቂያ ክፈት</button></div></div>
+      <div class="section"><div class="card"><h2>👥 ጓደኞችን ይጋብዙ</h2><p style="color:var(--muted);font-size:13px">የሚጋብዙት ሰው ሁለቱን ቻናሎች ካረጋገጠ 300 ነጥብ ያገኛሉ።</p><div class="refbox" id="refLink">—</div><button class="secondary full" style="margin-top:9px" onclick="shareReferral()">🔗 ይጋብዙ</button></div></div>
+    </section>
+
+    <section id="earn" class="page">
+      <div class="card"><h2>📺 ማስታወቂያ ይመልከቱ</h2><p>ዛሬ የቀረዎት እድል: <b id="remaining">50</b></p><button class="primary full" onclick="watchAd()">+200 ነጥብ ለማግኘት</button></div>
+      <div class="section card"><h2>👥 ሪፈራል</h2><p style="font-size:13px;color:var(--muted)">የሪፈራል ሽልማት 300 ነጥብ ነው። ሽልማቱ የሚሰጠው ግብዣው ሁለቱን ቻናሎች ካረጋገጠ በኋላ ብቻ ነው።</p></div>
+    </section>
+
+    <section id="withdraw" class="page">
+      <div id="withdrawLocked" class="card hidden"><h2>🔒 ገንዘብ ለማውጣት አልደረሱም</h2><p style="color:var(--muted)">ቢያንስ <b>20,000 ነጥብ</b> ያስፈልጋል።</p><p>አሁን: <b id="wPoints">0</b> ነጥብ</p><p>የሚቀር: <b id="wNeed">20,000</b> ነጥብ</p></div>
+      <div id="withdrawForm" class="card hidden"><h2>💸 ገንዘብ አውጣ</h2><div class="notice">20,000 ነጥብ = 25 ብር</div><label class="label">ስም</label><input id="firstName" class="input" placeholder="ስም" maxlength="60"><label class="label">የTelebirr ቁጥር</label><input id="telebirr" class="input" placeholder="09xxxxxxxx" inputmode="tel" maxlength="20"><button class="primary full" onclick="withdraw()">💸 የክፍያ ጥያቄ ላክ</button></div>
+      <div class="section card"><h2>📜 የክፍያ ታሪክ</h2><div id="history">ታሪክ የለም።</div></div>
+    </section>
+
+    <section id="profile" class="page">
+      <div class="card"><h2>👤 መለያ</h2><p>Telegram ID: <b id="uid">—</b></p><p>ስም: <b id="profileName">—</b></p><p>የጋበዙት: <b id="profileRefs">0</b></p></div>
+      <div class="section card"><h2>ℹ️ ስለ Birr Gram</h2><p style="font-size:13px;color:var(--muted)">ማስታወቂያ በመመልከት እና ጓደኞችን በመጋበዝ ነጥብ ያግኙ።</p></div>
+    </section>
+  </main>
+</div>
+
+<nav class="nav">
+  <button class="active" onclick="page('home',this)"><span>🏠</span>መነሻ</button>
+  <button onclick="page('earn',this)"><span>📺</span>ማግኘት</button>
+  <button onclick="page('withdraw',this)"><span>💸</span>ማውጣት</button>
+  <button onclick="page('profile',this)"><span>👤</span>መለያ</button>
+</nav>
+<div id="toast" class="toast hidden"></div>
+
+<script>
+const tg = window.Telegram?.WebApp;
+if (tg) { tg.ready(); tg.expand(); }
+const API = "/api";
+let state = null;
+const $ = id => document.getElementById(id);
+function toast(msg){$("toast").textContent=msg;$("toast").classList.remove("hidden");setTimeout(()=>$("toast").classList.add("hidden"),2800)}
+function page(id,btn){if(id==="withdraw"&&(state?.points||0)<20000){toast("🔒 20,000 ነጥብ ሲደርሱ ማውጣት ይችላሉ።");return}document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));$(id).classList.add("active");document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));btn?.classList.add("active")}
+function initData(){
+  const u=tg?.initDataUnsafe?.user;
+  const params=new URLSearchParams(location.search);
+  return { initData: tg?.initData || "", referralId: params.get("ref") || params.get("startapp") || "" };
+}
+async function api(path, body={}){
+  const r=await fetch(API+path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...body,...initData()})});
+  const d=await r.json().catch(()=>({error:"Server error"}));
+  if(!r.ok) throw new Error(d.error||"ስህተት ተፈጥሯል");
+  return d;
+}
+async function load(){
+  try{
+    state=await api("/user");
+    render();
+  }catch(e){toast(e.message)}
+  $("loader").classList.add("hidden");
+}
+function render(){
+  $("points").textContent=Number(state.points||0).toLocaleString();
+  $("adsToday").textContent=`${state.adsToday||0} / 50`;
+  $("remaining").textContent=Math.max(0,50-(state.adsToday||0));
+  $("bar").style.width=Math.min(100,((state.adsToday||0)/50)*100)+"%";
+  $("refs").textContent=state.referrals||0;
+  $("uid").textContent=state.userId||"—";
+  $("hello").textContent=state.firstName?`ሰላም ${state.firstName} 👋`:"እንኳን ደህና መጡ";
+  $("profileName").textContent=state.firstName||"—";
+  $("profileRefs").textContent=state.referrals||0;
+  $("wPoints").textContent=Number(state.points||0).toLocaleString();
+  $("wNeed").textContent=Math.max(0,20000-(state.points||0)).toLocaleString();
+  $("withdrawLocked").classList.toggle("hidden",(state.points||0)>=20000);
+  $("withdrawForm").classList.toggle("hidden",(state.points||0)<20000);
+  $("refLink").textContent=state.referralLink||"—";
+  renderHistory();
+}
+function renderHistory(){
+  const h=state.withdrawals||[];
+  if(!h.length){$("history").textContent="ታሪክ የለም።";return}
+  $("history").innerHTML=h.map(x=>`<div class="history"><div><b>${x.amountBirr} ብር</b><br><small>${new Date(x.createdAt).toLocaleString()}</small></div><span class="pill ${x.status==="SUCCESSFULLY"?"success":""}">${x.status==="SUCCESSFULLY"?"ተሳክቷል":"Pending ⏳"}</span></div>`).join("");
+}
+async function verifyAndLoad(){
+  try{
+    const d=await api("/verify-channels");
+    if(!d.verified){
+      document.body.innerHTML=`<div style="min-height:100vh;background:#f5f8f6;display:flex;align-items:center;justify-content:center;padding:22px;font-family:Arial"><div style="width:min(480px,100%);background:#fff;border-radius:28px;padding:26px 20px;box-shadow:0 10px 30px rgba(9,46,31,.08);text-align:center"><div style="font-size:52px">🇪🇹</div><h1 style="margin:7px 0">Birr Gram</h1><p style="color:#718079;font-size:13px;line-height:1.55">መጀመሪያ ሁለቱንም የTelegram ቻናሎች ይቀላቀሉ። ከዚያ አባልነትዎን ያረጋግጡ።</p><a href="https://t.me/usdt_g_ram" target="_blank" style="display:block;text-decoration:none;background:#eef8f4;color:#08251b;padding:15px;border-radius:14px;margin:9px 0;font-weight:800">📢 @usdt_g_ram ተቀላቀል</a><a href="https://t.me/usdt_hub_payment_proof" target="_blank" style="display:block;text-decoration:none;background:#eef8f4;color:#08251b;padding:15px;border-radius:14px;margin:9px 0;font-weight:800">📢 @usdt_hub_payment_proof ተቀላቀል</a><button onclick="location.reload()" style="width:100%;margin-top:8px;background:#087f52;color:#fff;border:0;border-radius:14px;padding:15px;font-weight:800">✅ አረጋግጥ</button></div></div>`;
+      return;
+    }
+    await load();
+  }catch(e){
+    $("loader").classList.add("hidden");
+    document.body.innerHTML=`<div style="min-height:100vh;background:#f5f8f6;display:flex;align-items:center;justify-content:center;padding:22px;font-family:Arial"><div style="width:min(480px,100%);background:#fff;border-radius:28px;padding:26px 20px;box-shadow:0 10px 30px rgba(9,46,31,.08);text-align:center"><div style="font-size:52px">🇪🇹</div><h2>Birr Gram</h2><p style="color:#b32626;font-size:13px;line-height:1.6">${String(e.message||"ስህተት ተፈጥሯል.")}</p><p style="color:#718079;font-size:12px">Bot በሁለቱም ቻናሎች administrator መሆኑን ያረጋግጡ።</p><button onclick="location.reload()" style="width:100%;background:#087f52;color:#fff;border:0;border-radius:14px;padding:15px;font-weight:800">🔄 እንደገና ሞክር</button></div></div>`;
+  }
+}
+async function watchAd(){
+  if((state?.adsToday||0)>=50){toast("የዛሬ 50 ማስታወቂያ ገደብ ደርሷል።");return}
+  try{
+    if(typeof window.show_11728656!=="function"){toast("ማስታወቂያው አልተዘጋጀም።");return}
+    toast("ማስታወቂያ እየተከፈተ ነው…");
+    const result=window.show_11728656();
+    if(result && typeof result.then==="function") await result;
+    const d=await api("/ad-complete");
+    state=d.state;render();toast("🎉 +200 ነጥብ ተጨምሯል!");
+  }catch(e){toast(e.message||"ማስታወቂያው አልተጠናቀቀም።")}
+}
+async function withdraw(){
+  const firstName=$("firstName").value.trim(), telebirr=$("telebirr").value.trim();
+  if(!firstName||!telebirr){toast("ስም እና የTelebirr ቁጥር ያስገቡ።");return}
+  if(!/^09\d{8}$/.test(telebirr)){toast("የTelebirr ቁጥር በ09 ጀምሮ 10 አሃዝ ይሁን።");return}
+  if(!confirm("25 ብር ለማውጣት 20,000 ነጥብ እንዲቀነስ ይፈልጋሉ?")) return;
+  try{const d=await api("/withdraw",{firstName,telebirr});state=d.state;render();toast("✅ የክፍያ ጥያቄዎ ተልኳል። Pending ⏳");$("firstName").value="";$("telebirr").value=""}
+  catch(e){toast(e.message)}
+}
+function shareReferral(){
+  const text="Birr Gram 🇪🇹 ይቀላቀሉ፣ ማስታወቂያ በመመልከት ነጥብ ያግኙ!";
+  if(tg?.openTelegramLink && state?.referralLink) tg.openTelegramLink("https://t.me/share/url?url="+encodeURIComponent(state.referralLink)+"&text="+encodeURIComponent(text));
+  else navigator.clipboard?.writeText(state.referralLink).then(()=>toast("የሪፈራል ሊንኩ ተቀድቷል።"));
+}
+verifyAndLoad();
+</script>
+</body>
+</html>
